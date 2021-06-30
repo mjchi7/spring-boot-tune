@@ -1,0 +1,46 @@
+project: mongocall
+
+env:
+  MINIKUBE_PROFILE: general
+
+discover:
+  - chart/mongo
+  - chart/ingress
+
+tasks:
+  build:
+    cmd: |
+      ./gradlew bootJar
+
+  clean:
+    cmd: |
+      ./gradlew clean
+
+  bake:
+    cmd: |
+      myke clean build
+      docker build . --tag mongocall:latest
+
+  deploy-server:
+    cmd: |
+      kubectl apply -f chart/server/mongocall.yaml
+
+  undeploy-server:
+    cmd: |
+      kubectl delete -f chart/server/mongocall.yaml
+
+  deploy-ingress-controller:
+    cmd: |
+      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.47.0/deploy/static/provider/cloud/deploy.yaml
+
+  sync-image:
+    cmd: |
+      docker save -o mongocall-latest.tar mongocall:latest
+      docker cp mongocall-latest.tar ${MINIKUBE_PROFILE}:/home/mongocall-latest.tar
+      docker exec ${MINIKUBE_PROFILE} bash -c "docker load -i /home/mongocall-latest.tar"
+      rm mongocall-latest.tar
+
+  minikube:
+    cmd: |
+      minikube start --cpus 3 --memory 8192 --profile ${MINIKUBE_PROFILE}
+      minikube profile ${MINIKUBE_PROFILE}

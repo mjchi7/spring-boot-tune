@@ -1,0 +1,10 @@
+project: mongo
+
+tasks:
+  deploy:
+    cmd: |
+      kubectl apply -f mongo.yaml
+
+  undeploy:
+    cmd: |
+      kubectl delete -f mongo.yaml

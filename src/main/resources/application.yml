@@ -1,0 +1,13 @@
+server:
+  port: ${SERVER_PORT:8080}
+  tomcat:
+    accept-count: ${TOMCAT_ACCEPT_COUNT:100}
+    max-connections: ${TOMCAT_MAX_CONN:8192}
+    threads:
+      max: ${TOMCAT_THREADS_MAX:200}
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017
+      database: mongocall

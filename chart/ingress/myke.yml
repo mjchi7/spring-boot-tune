@@ -1,0 +1,10 @@
+project: ingress
+
+tasks:
+  deploy:
+    cmd: |
+      kubectl apply -f ingress.yaml
+
+  undeploy:
+    cmd: |
+      kubectl delete -f ingress.yaml

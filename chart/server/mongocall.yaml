@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - name: server
+          image: mongocall:latest
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: SERVER_PORT
+            value: "8080"
+          - name: TOMCAT_ACCESSLOG_ENALBED
+            value: "true"
+          - name: TOMCAT_THREADS_MAX
+            value: "300"
+          - name: TOMCAT_ACCEPT_COUNT
+            value: "100"
+          - name: TOMCAT_MAX_CONN
+            value: "8192"
+          ports:
+          - containerPort: 8080
+            name: http
+          resources:
+            limits:
+              cpu: "600m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server
+  labels:
+    service: server
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: server
